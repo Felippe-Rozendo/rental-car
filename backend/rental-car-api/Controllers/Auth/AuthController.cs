@@ -14,6 +14,7 @@ namespace rental_car_api.Controllers.Auth
 {
     [Route("api/[controller]")]
     [ApiController]
+    [AllowAnonymous]
     public class AuthController : ControllerBase
     {
 
@@ -26,7 +27,6 @@ namespace rental_car_api.Controllers.Auth
             _config = config;
         }
 
-        [AllowAnonymous]
         [HttpPost]
         [Route("Register")]
         public async Task<IActionResult> Register(RegisterUserRequest model)
@@ -65,7 +65,8 @@ namespace rental_car_api.Controllers.Auth
                 var authClaims = new List<Claim>
                 {
                     new Claim(ClaimTypes.Name, user.UserName),
-                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                    new Claim("IsAdmin", user.IsAdmin)
                 };
 
                 foreach (var userRole in userRoles)
