@@ -1,9 +1,11 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using rental_car_api.Contexts;
 using rental_car_api.Contexts.DTO;
 using rental_car_api.Enum;
+using System.Globalization;
 
 namespace rental_car_api.Controllers
 {
@@ -19,12 +21,24 @@ namespace rental_car_api.Controllers
             _db = db;
         }
 
-        [HttpGet("obter-carros")]
-        public async Task<IActionResult> ObterCarrosAsync(CancellationToken ct)
+        [HttpPost("obter-carros")]
+        public async Task<IActionResult> ObterCarrosAsync(CancellationToken ct, [FromBody] FiltroCarroRequest filtro)
         {
             try
             {
                 var query = await _db.Carros.AsNoTracking()
+                                            .Where(f =>
+                                                (string.IsNullOrEmpty(filtro.Marca) || f.Marca == filtro.Marca) &&
+                                                (string.IsNullOrEmpty(filtro.Modelo) || f.Modelo == filtro.Modelo) &&
+                                                (string.IsNullOrEmpty(filtro.PotenciaMin.ToString()) || f.Potencia >= filtro.PotenciaMin) &&
+                                                (string.IsNullOrEmpty(filtro.PotenciaMax.ToString()) || f.Potencia <= filtro.PotenciaMax) &&
+                                                (string.IsNullOrEmpty(filtro.TorqueMin.ToString()) || f.Torque >= filtro.TorqueMin) &&
+                                                (string.IsNullOrEmpty(filtro.TorqueMax.ToString()) || f.Torque <= filtro.TorqueMax) &&
+                                                (string.IsNullOrEmpty(filtro.Combustivel) || f.Combustivel == filtro.Combustivel) &&
+                                                (string.IsNullOrEmpty(filtro.PrecoDiariaMin) || float.Parse(f.PrecoDiaria, CultureInfo.GetCultureInfo("en-US")) >= float.Parse(filtro.PrecoDiariaMin, CultureInfo.GetCultureInfo("en-US"))) &&
+                                                (string.IsNullOrEmpty(filtro.PrecoDiariaMax) || float.Parse(f.PrecoDiaria, CultureInfo.GetCultureInfo("en-US")) <= float.Parse(filtro.PrecoDiariaMax, CultureInfo.GetCultureInfo("en-US"))) &&
+                                                (string.IsNullOrEmpty(filtro.AnoMin.ToString()) || f.Ano >= filtro.AnoMin) &&
+                                                (string.IsNullOrEmpty(filtro.AnoMax.ToString()) || f.Ano <= filtro.AnoMax))
                                             .Select(x => new CarroModel
                                             {
                                                 Id = x.Id,

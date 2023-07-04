@@ -9,6 +9,7 @@ using Microsoft.OpenApi.Models;
 using rental_car_api.Contexts;
 using System;
 using System.Text;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -69,6 +70,9 @@ builder.Services.AddControllers(options =>
         .Build();
 
     options.Filters.Add(new AuthorizeFilter(policy));
+}).AddJsonOptions(options =>
+{
+    options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
 });
 
 builder.Services.AddAuthorization(options =>
