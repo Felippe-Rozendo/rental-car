@@ -4,10 +4,10 @@
     {
         public string Marca { get; set; } = string.Empty;
         public string Modelo { get; set; } = string.Empty;
-        public int Potencia { get; set; }
-        public int Torque { get; set; }
+        public float Potencia { get; set; }
+        public float Torque { get; set; }
         public string Combustivel { get; set; } = string.Empty;
-        public string PrecoDiaria { get; set; } = string.Empty;
+        public float PrecoDiaria { get; set; }
         public int Ano { get; set; }
     }
 }

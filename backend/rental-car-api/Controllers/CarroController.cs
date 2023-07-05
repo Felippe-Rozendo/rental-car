@@ -28,29 +28,28 @@ namespace rental_car_api.Controllers
             {
                 var query = await _db.Carros.AsNoTracking()
                                             .Where(f =>
-                                                (string.IsNullOrEmpty(filtro.Marca) || f.Marca == filtro.Marca) &&
-                                                (string.IsNullOrEmpty(filtro.Modelo) || f.Modelo == filtro.Modelo) &&
-                                                (string.IsNullOrEmpty(filtro.PotenciaMin.ToString()) || f.Potencia >= filtro.PotenciaMin) &&
-                                                (string.IsNullOrEmpty(filtro.PotenciaMax.ToString()) || f.Potencia <= filtro.PotenciaMax) &&
-                                                (string.IsNullOrEmpty(filtro.TorqueMin.ToString()) || f.Torque >= filtro.TorqueMin) &&
-                                                (string.IsNullOrEmpty(filtro.TorqueMax.ToString()) || f.Torque <= filtro.TorqueMax) &&
+                                                (string.IsNullOrEmpty(filtro.Marca) || f.Marca.ToUpper().Contains(filtro.Marca.ToUpper())) &&
+                                                (string.IsNullOrEmpty(filtro.Modelo) || f.Modelo.ToUpper().Contains(filtro.Modelo.ToUpper())) &&
+                                                (!filtro.PotenciaMin.HasValue || f.Potencia >= filtro.PotenciaMin) &&
+                                                (!filtro.PotenciaMax.HasValue || f.Potencia <= filtro.PotenciaMax) &&
+                                                (!filtro.TorqueMin.HasValue || f.Torque >= filtro.TorqueMin) &&
+                                                (!filtro.TorqueMax.HasValue || f.Torque <= filtro.TorqueMax) &&
                                                 (string.IsNullOrEmpty(filtro.Combustivel) || f.Combustivel == filtro.Combustivel) &&
-                                                (string.IsNullOrEmpty(filtro.PrecoDiariaMin) || float.Parse(f.PrecoDiaria, CultureInfo.GetCultureInfo("en-US")) >= float.Parse(filtro.PrecoDiariaMin, CultureInfo.GetCultureInfo("en-US"))) &&
-                                                (string.IsNullOrEmpty(filtro.PrecoDiariaMax) || float.Parse(f.PrecoDiaria, CultureInfo.GetCultureInfo("en-US")) <= float.Parse(filtro.PrecoDiariaMax, CultureInfo.GetCultureInfo("en-US"))) &&
-                                                (string.IsNullOrEmpty(filtro.AnoMin.ToString()) || f.Ano >= filtro.AnoMin) &&
-                                                (string.IsNullOrEmpty(filtro.AnoMax.ToString()) || f.Ano <= filtro.AnoMax))
-                                            .Select(x => new CarroModel
+                                                (!filtro.PrecoDiariaMin.HasValue || f.PrecoDiaria >= filtro.PrecoDiariaMin) &&
+                                                (!filtro.PrecoDiariaMax.HasValue || f.PrecoDiaria <= filtro.PrecoDiariaMax) &&
+                                                (!filtro.AnoMin.HasValue || f.Ano >= filtro.AnoMin) &&
+                                                (!filtro.AnoMax.HasValue || f.Ano <= filtro.AnoMax))
+                                            .Select(x => new CarroDtoResponse
                                             {
                                                 Id = x.Id,
                                                 Ano = x.Ano,
                                                 Combustivel = EnumHelper.GetEnumDescription<CombustivelEnum>(x.Combustivel),
-                                                Fotos = x.Fotos,
+                                                //Fotos = x.Fotos,
                                                 Marca = x.Marca,
                                                 Modelo = x.Modelo,
-                                                Potencia = x.Potencia,
-                                                PrecoDiaria = x.PrecoDiaria,
-                                                //Reservas = x.Reservas,
-                                                Torque = x.Torque
+                                                Potencia = x.Potencia.ToString().Replace('.', ','),
+                                                PrecoDiaria = x.PrecoDiaria.ToString().Replace('.', ','),
+                                                Torque = x.Torque.ToString().Replace('.', ',')
                                             }).ToListAsync(ct);
 
                 return Ok(query);

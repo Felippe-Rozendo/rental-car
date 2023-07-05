@@ -54,6 +54,7 @@ namespace rental_car_api.Controllers
                                           IdCarro = carro.Id,
                                           MarcaCarro = carro.Marca,
                                           ModeloCarro = carro.Modelo,
+                                          ValorTotal = ((reserva.DataFim - reserva.DataInicio).TotalDays * carro.PrecoDiaria).ToString().Replace('.', ','),
                                           DataInicio = reserva.DataInicio,
                                           DataFim = reserva.DataFim
                                       }).ToListAsync(ct);
