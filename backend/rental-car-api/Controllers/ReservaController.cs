@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using rental_car_api.Contexts;
 using rental_car_api.Contexts.DTO;
+using rental_car_api.Service.Email;
 
 namespace rental_car_api.Controllers
 {
@@ -79,6 +80,7 @@ namespace rental_car_api.Controllers
                     return BadRequest("Periodo já está reservado.");
 
                 var user = await _db.Users.FirstOrDefaultAsync(u => u.UserName == User.Identity!.Name!, ct);
+                var carro = await _db.Carros.FirstOrDefaultAsync(c => c.Id == model.IdCarro, ct);
 
                 ReservaModel reserva = new ReservaModel
                 {
@@ -88,8 +90,14 @@ namespace rental_car_api.Controllers
                     DataFim = model.DataFim
                 };
 
+                var totalDays = (reserva.DataFim - reserva.DataInicio).TotalDays;
+
+                EmailContent emailContent = new EmailContent(User.Identity!.Name!, carro.Marca, carro.Modelo, totalDays, totalDays * carro.PrecoDiaria);
+
                 await _db.Reservas.AddAsync(reserva, ct);
                 await _db.SaveChangesAsync(ct);
+                
+                new EmailSender().SendEmail(user.Email!, "Reserva Rental Car", true, emailContent);
 
                 return Ok("Reserva realizada com sucesso.");
             }
