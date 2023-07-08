@@ -6,6 +6,8 @@ using rental_car_api.Contexts;
 using rental_car_api.Contexts.DTO;
 using rental_car_api.Enum;
 using System.Globalization;
+using System.Net.Http.Headers;
+using System.Text.RegularExpressions;
 
 namespace rental_car_api.Controllers
 {
@@ -44,7 +46,7 @@ namespace rental_car_api.Controllers
                                                 Id = x.Id,
                                                 Ano = x.Ano,
                                                 Combustivel = EnumHelper.GetEnumDescription<CombustivelEnum>(x.Combustivel),
-                                                //Fotos = x.Fotos,
+                                                Fotos = FotosCarro(x.Marca, x.Modelo),
                                                 Marca = x.Marca,
                                                 Modelo = x.Modelo,
                                                 Potencia = x.Potencia.ToString().Replace('.', ','),
@@ -144,5 +146,83 @@ namespace rental_car_api.Controllers
 
         }
 
+        [Authorize(Policy = "AdminOnly")]
+        [HttpPost("upload/imagem-carro")]
+        public async Task<IActionResult> UploadImagemAsync(IFormFile[] fotos, string marca, string modelo)
+        {
+            try
+            {
+                foreach (var foto in fotos)
+                {
+                    if (foto.Length > 0)
+                    {
+                        var uploadsFolderPath = Path.Combine(Directory.GetCurrentDirectory(), "Resources", marca.ToLower(), modelo.ToLower());
+
+                        if (!Directory.Exists(uploadsFolderPath))
+                        {
+                            Directory.CreateDirectory(uploadsFolderPath);
+                        }
+
+                        var filePath = Path.Combine(uploadsFolderPath, foto.FileName);
+
+                        using (var stream = new FileStream(filePath, FileMode.Create))
+                        {
+                            await foto.CopyToAsync(stream);
+                        }
+                    }
+                }
+
+                return Ok("Fotos Salvas com sucesso.");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [Authorize(Policy = "AdminOnly")]
+        [HttpDelete("excluir-foto")]
+        public IActionResult ExcluirFoto(string fileName, string marca, string modelo)
+        {
+            try
+            {
+                var filePath = Path.Combine(Directory.GetCurrentDirectory(), "Resources", marca.ToLower(), modelo.ToLower(), fileName);
+
+                if (System.IO.File.Exists(filePath))
+                {
+                    System.IO.File.Delete(filePath);
+                    return Ok("Foto excluída com sucesso");
+                }
+
+                return NotFound();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        private static List<string> FotosCarro(string marca, string modelo)
+        {
+            var folderPath = Path.Combine(Directory.GetCurrentDirectory(), "Resources", marca.ToLower(), modelo.ToLower());
+
+            if (Directory.Exists(folderPath))
+            {
+                var imageFiles = Directory.GetFiles(folderPath);
+
+                List<string> imageUrls = new List<string>();
+
+                foreach (var file in imageFiles)
+                {
+                    var fileName = Path.GetFileName(file);
+                    var imageUrl = $"/api/upload/Resources/{marca.ToLower()}/{modelo.ToLower()}/{fileName}";
+                    imageUrls.Add(imageUrl);
+                }
+
+                return imageUrls;
+            }
+
+            return new List<string>();
+        }
     }
 }
