@@ -27,8 +27,7 @@ namespace rental_car_api.Controllers.Auth
             _config = config;
         }
 
-        [HttpPost]
-        [Route("Register")]
+        [HttpPost("register")]
         public async Task<IActionResult> Register(RegisterUserRequest model)
         {
             var userExist = await _userManager.FindByNameAsync(model.UserName);
@@ -39,6 +38,8 @@ namespace rental_car_api.Controllers.Auth
             {
                 UserName = model.UserName,
                 Email = model.Email,
+                Idade = model.Idade,
+                Cidade = model.Cidade,
                 IsAdmin = model.IsAdmin,
                 PhoneNumber = model.PhoneNumber,
                 SecurityStamp = Guid.NewGuid().ToString(),
@@ -54,8 +55,25 @@ namespace rental_car_api.Controllers.Auth
             return Ok("User Created Successfully");
         }
 
-        [HttpPost]
-        [Route("Login")]
+        [HttpPost("redefinir-senha")]
+        public async Task<IActionResult> RedefinirSenhaAsync(ResetPasswordModel model)
+        {
+            var user = await _userManager.FindByEmailAsync(model.Email);
+            if (user == null)
+                return BadRequest("Email inválido.");
+
+            var token = await _userManager.GeneratePasswordResetTokenAsync(user!);
+
+            var result = await _userManager.ResetPasswordAsync(user!, token, model.NewPassword);
+            if (!result.Succeeded)
+            {
+                return BadRequest("Não foi possível redefinir a senha.");
+            }
+
+            return Ok("Senha redefinida com sucesso");
+        }
+
+        [HttpPost("login")]
         public async Task<IActionResult> Login(LoginRequest model)
         {
             var user = await _userManager.FindByEmailAsync(model.Email);

@@ -13,6 +13,12 @@ namespace rental_car_api.Contexts.DTO
         [Required(ErrorMessage = "Email é obrigatório."), EmailAddress(ErrorMessage = "Informe um endereço de e-mail válido.")]
         public string Email { get; set; } = String.Empty;
 
+        [Required(ErrorMessage = "Idade é obrigatória.")]
+        public int Idade { get; set; }
+        
+        [Required(ErrorMessage = "Cidade é obrigatória.")]
+        public string Cidade { get; set; }
+
         [Required(ErrorMessage = "Senha é obrigatória.")]
         public string Password { get; set; } = String.Empty;
 
