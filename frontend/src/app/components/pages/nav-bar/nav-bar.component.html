@@ -1,0 +1,21 @@
+<div class="nav-container">
+  <img src="../../../../assets/images/logo.png" alt="">
+
+  <div class="nav-content">
+    <span >Home</span>
+    <span >Reservas</span>
+  </div>
+ 
+  <button mat-icon-button id="mat-menu" [matMenuTriggerFor]="menu">
+    <mat-icon>more_vert</mat-icon>
+  </button>
+  <mat-menu #menu="matMenu">
+    <button mat-menu-item>
+      <span>Cadastrar Carro</span>
+    </button>
+    <button mat-menu-item>
+      <span>Entrar</span>
+    </button>
+  </mat-menu>
+
+</div>

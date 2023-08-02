@@ -1,0 +1,32 @@
+.nav-container {
+  height: 6rem;
+  display: flex;
+  background: linear-gradient(
+    90deg,
+    rgba(50, 50, 50, 1) 30%,
+    rgba(84, 84, 84, 1) 69%,
+    rgba(190, 190, 190, 1) 100%
+  );
+}
+
+img {
+    padding: 0.5rem;
+    margin-left: 1rem;
+}
+
+.nav-content{
+    display: flex;
+    width: -webkit-fill-available;
+    justify-content: space-around;
+    align-items: center;
+}
+
+#mat-menu{
+    margin-right: 2rem !important;
+    margin: auto;
+}
+
+.nav-content span{
+    color: #fff;
+    cursor: pointer;
+}

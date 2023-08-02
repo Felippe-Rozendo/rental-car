@@ -1,0 +1,19 @@
+.container{
+    margin: 0 10%;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+
+mat-card{
+    margin-top: 2.7rem;
+    width: 28%;
+    box-shadow: 2px 4px 15px rgba(0, 0, 0, 0.3) !important;
+    min-width: 320px;
+
+    transition: transform 0.3s ease-in-out;
+}
+
+mat-card:hover {
+    transform: scale(1.03);
+}

@@ -1,0 +1,19 @@
+<app-nav-bar></app-nav-bar>
+
+<div class="container">
+
+  <ng-container *ngFor="let carro of catalogoCarros">
+    <mat-card>
+      <img mat-card-image [src]="imagemUrl(carro.fotos[0])" alt="">
+      <mat-card-content>
+        <p>{{carro.marca}} {{carro.modelo}} {{carro.ano}}</p>
+        <p>Potência {{carro.potencia}}cv e {{carro.torque}} kgf.m</p>
+        <p>Por R${{carro.precoDiaria}} a diária</p>
+      </mat-card-content>
+      <mat-card-actions align="end">
+        <button mat-button>VER MAIS</button>
+      </mat-card-actions>
+    </mat-card>
+  </ng-container>
+
+</div>

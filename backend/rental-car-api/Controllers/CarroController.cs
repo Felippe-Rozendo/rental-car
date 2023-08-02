@@ -23,8 +23,9 @@ namespace rental_car_api.Controllers
             _db = db;
         }
 
+        [AllowAnonymous]
         [HttpPost("obter-carros")]
-        public async Task<IActionResult> ObterCarrosAsync(CancellationToken ct, [FromBody] FiltroCarroRequest filtro)
+        public async Task<IActionResult> ObterCarrosAsync(CancellationToken ct, [FromBody] FiltroCarroRequest? filtro)
         {
             try
             {
@@ -156,7 +157,7 @@ namespace rental_car_api.Controllers
                 {
                     if (foto.Length > 0)
                     {
-                        var uploadsFolderPath = Path.Combine(Directory.GetCurrentDirectory(), "Resources", marca.ToLower(), modelo.ToLower());
+                        var uploadsFolderPath = Path.Combine(Directory.GetCurrentDirectory(), "Resources", marca.ToLower().Replace(" ", ""), modelo.ToLower().Replace(" ", ""));
 
                         if (!Directory.Exists(uploadsFolderPath))
                         {
@@ -186,7 +187,7 @@ namespace rental_car_api.Controllers
         {
             try
             {
-                var filePath = Path.Combine(Directory.GetCurrentDirectory(), "Resources", marca.ToLower(), modelo.ToLower(), fileName);
+                var filePath = Path.Combine(Directory.GetCurrentDirectory(), "Resources", marca.ToLower().Replace(" ", ""), modelo.ToLower().Replace(" ", ""), fileName);
 
                 if (System.IO.File.Exists(filePath))
                 {
@@ -202,9 +203,10 @@ namespace rental_car_api.Controllers
             }
         }
 
+        [AllowAnonymous]
         private static List<string> FotosCarro(string marca, string modelo)
         {
-            var folderPath = Path.Combine(Directory.GetCurrentDirectory(), "Resources", marca.ToLower(), modelo.ToLower());
+            var folderPath = Path.Combine(Directory.GetCurrentDirectory(), "Resources", marca.ToLower().Replace(" ", ""), modelo.ToLower().Replace(" ", ""));
 
             if (Directory.Exists(folderPath))
             {
@@ -215,7 +217,7 @@ namespace rental_car_api.Controllers
                 foreach (var file in imageFiles)
                 {
                     var fileName = Path.GetFileName(file);
-                    var imageUrl = $"/api/upload/Resources/{marca.ToLower()}/{modelo.ToLower()}/{fileName}";
+                    var imageUrl = Path.Combine("Resources", marca.ToLower().Replace(" ", ""), modelo.ToLower().Replace(" ", ""), fileName);
                     imageUrls.Add(imageUrl);
                 }
 
