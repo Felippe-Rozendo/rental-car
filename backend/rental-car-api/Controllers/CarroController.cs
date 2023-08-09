@@ -212,13 +212,13 @@ namespace rental_car_api.Controllers
             {
                 var imageFiles = Directory.GetFiles(folderPath);
 
-                List<string> imageUrls = new List<string>();
+                var imageUrls = new List<string>();
 
                 foreach (var file in imageFiles)
                 {
                     var fileName = Path.GetFileName(file);
-                    var imageUrl = Path.Combine("Resources", marca.ToLower().Replace(" ", ""), modelo.ToLower().Replace(" ", ""), fileName);
-                    imageUrls.Add(imageUrl);
+                    var image = System.IO.File.ReadAllBytes(Path.Combine("Resources", marca.ToLower().Replace(" ", ""), modelo.ToLower().Replace(" ", ""), fileName));
+                    imageUrls.Add(Convert.ToBase64String(image));
                 }
 
                 return imageUrls;

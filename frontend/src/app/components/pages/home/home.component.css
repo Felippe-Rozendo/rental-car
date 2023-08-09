@@ -2,7 +2,7 @@
     margin: 0 10%;
     display: flex;
     flex-wrap: wrap;
-    justify-content: space-between;
+    justify-content: space-around;
 }
 
 mat-card{
@@ -17,3 +17,14 @@ mat-card{
 mat-card:hover {
     transform: scale(1.03);
 }
+
+#mat-img {
+    max-height: 310px; 
+    min-height: 310px; 
+    overflow: hidden;
+    object-fit: cover;
+  }
+
+  mat-card-actions button{
+    width: 100%;
+  }
